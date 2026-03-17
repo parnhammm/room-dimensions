@@ -7,3 +7,7 @@
 /speckit.constitution Please add a section for testing methodology. We should adhere to the testing pyramid with unit tests for all logic with external dependencies mocked out, and end-to-end suite that tests each feature with a mocked database in docker, and user centric testing for UI features using playwright
 
 Please update the README to align with the constitution
+
+/speckit.specify Build me an application that allows me to capture the dimensions of each room in the house. Each room should support a dimension for the floor and the ceiling, with the ability to support none square or rectangular shapes. Each wall should support optionally the ability to include a window which should also have dimensions set that can be viewed when viewing the wall. These dimensions should be able to be added/edited/deleted as well as labeled. The room should also be labeled and support the ability to define which floor the room is on. 
+
+/speckit.clarify
