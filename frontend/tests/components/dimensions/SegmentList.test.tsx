@@ -3,8 +3,8 @@ import { SegmentList } from '../../../src/components/dimensions/SegmentList';
 import { SegmentResponse } from '../../../src/types';
 import React from 'react';
 
-jest.mock('../../../src/hooks/useSettings', () => ({
-  useSettings: () => ({ unit: 'm', updateUnit: jest.fn(), loading: false, error: null }),
+vi.mock('../../../src/hooks/useSettings', () => ({
+  useSettings: () => ({ unit: 'm', updateUnit: vi.fn(), loading: false, error: null }),
 }));
 
 const mockSegs: SegmentResponse[] = [
@@ -15,9 +15,9 @@ const defaultProps = {
   loading: false,
   error: null,
   surfaceLabel: 'floor',
-  onAdd: jest.fn().mockResolvedValue(undefined),
-  onUpdate: jest.fn().mockResolvedValue(undefined),
-  onDelete: jest.fn().mockResolvedValue(undefined),
+  onAdd: vi.fn().mockResolvedValue(undefined),
+  onUpdate: vi.fn().mockResolvedValue(undefined),
+  onDelete: vi.fn().mockResolvedValue(undefined),
 };
 
 describe('SegmentList', () => {
@@ -43,11 +43,11 @@ describe('SegmentList', () => {
   });
 
   it('calls onDelete with confirmation', async () => {
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
-    const onDelete = jest.fn().mockResolvedValue(undefined);
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const onDelete = vi.fn().mockResolvedValue(undefined);
     render(<SegmentList {...defaultProps} segments={mockSegs} onDelete={onDelete} />);
     fireEvent.click(screen.getByLabelText(/Delete North/i));
     await waitFor(() => expect(onDelete).toHaveBeenCalledWith(1));
-    (window.confirm as jest.Mock).mockRestore();
+    (window.confirm as ReturnType<typeof vi.fn>).mockRestore();
   });
 });

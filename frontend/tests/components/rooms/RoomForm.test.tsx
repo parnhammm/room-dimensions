@@ -3,7 +3,7 @@ import { RoomForm } from '../../../src/components/rooms/RoomForm';
 
 describe('RoomForm', () => {
   it('shows validation error when label is empty', async () => {
-    render(<RoomForm onSubmit={jest.fn()} />);
+    render(<RoomForm onSubmit={vi.fn()} />);
     fireEvent.click(screen.getByRole('button', { name: /Save/i }));
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent('Label is required');
@@ -11,7 +11,7 @@ describe('RoomForm', () => {
   });
 
   it('shows validation error when floor is empty', async () => {
-    render(<RoomForm onSubmit={jest.fn()} />);
+    render(<RoomForm onSubmit={vi.fn()} />);
     fireEvent.change(screen.getByLabelText(/Room Label/i), { target: { value: 'Kitchen' } });
     fireEvent.click(screen.getByRole('button', { name: /Save/i }));
     await waitFor(() => {
@@ -20,7 +20,7 @@ describe('RoomForm', () => {
   });
 
   it('calls onSubmit with trimmed values', async () => {
-    const onSubmit = jest.fn().mockResolvedValue(undefined);
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
     render(<RoomForm onSubmit={onSubmit} />);
     fireEvent.change(screen.getByLabelText(/Room Label/i), { target: { value: '  Kitchen  ' } });
     fireEvent.change(screen.getByLabelText(/Floor/i), { target: { value: '  Ground Floor  ' } });
@@ -34,7 +34,7 @@ describe('RoomForm', () => {
     render(
       <RoomForm
         initialValues={{ label: 'Bedroom', floor: 'First Floor' }}
-        onSubmit={jest.fn()}
+        onSubmit={vi.fn()}
       />,
     );
     expect(screen.getByLabelText(/Room Label/i)).toHaveValue('Bedroom');

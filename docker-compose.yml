@@ -2,18 +2,18 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ./frontend
+      context: .
+      dockerfile: frontend/Dockerfile
       target: production
     ports:
       - "3000:80"
-    environment:
-      - VITE_API_URL=http://localhost:4000
     depends_on:
       - backend
 
   backend:
     build:
-      context: ./backend
+      context: .
+      dockerfile: backend/Dockerfile
       target: production
     ports:
       - "4000:4000"

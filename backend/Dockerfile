@@ -2,15 +2,19 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production=false
-COPY . .
+COPY backend/package.json ./backend/
+RUN npm ci --workspace=backend
+COPY backend/ ./backend/
+WORKDIR /app/backend
 RUN npm run build
 
 # Stage 2: Production
 FROM node:20-alpine AS production
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
-COPY --from=builder /app/dist ./dist
+COPY backend/package.json ./backend/
+RUN npm ci --workspace=backend --omit=dev
+COPY --from=builder /app/backend/dist ./backend/dist
+WORKDIR /app/backend
 EXPOSE 4000
 CMD ["node", "dist/index.js"]

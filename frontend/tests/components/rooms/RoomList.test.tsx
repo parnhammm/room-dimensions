@@ -14,38 +14,38 @@ function renderWithRouter(ui: React.ReactElement) {
 
 describe('RoomList', () => {
   it('shows empty state when no rooms', () => {
-    renderWithRouter(<RoomList rooms={[]} loading={false} error={null} onDelete={jest.fn()} />);
+    renderWithRouter(<RoomList rooms={[]} loading={false} error={null} onDelete={vi.fn()} />);
     expect(screen.getByText(/No rooms yet/i)).toBeInTheDocument();
   });
 
   it('renders list of rooms', () => {
     renderWithRouter(
-      <RoomList rooms={mockRooms} loading={false} error={null} onDelete={jest.fn()} />,
+      <RoomList rooms={mockRooms} loading={false} error={null} onDelete={vi.fn()} />,
     );
     expect(screen.getByText('Kitchen')).toBeInTheDocument();
     expect(screen.getByText('Bedroom')).toBeInTheDocument();
   });
 
   it('shows loading spinner', () => {
-    renderWithRouter(<RoomList rooms={[]} loading={true} error={null} onDelete={jest.fn()} />);
+    renderWithRouter(<RoomList rooms={[]} loading={true} error={null} onDelete={vi.fn()} />);
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('shows error message', () => {
     renderWithRouter(
-      <RoomList rooms={[]} loading={false} error="Network error" onDelete={jest.fn()} />,
+      <RoomList rooms={[]} loading={false} error="Network error" onDelete={vi.fn()} />,
     );
     expect(screen.getByRole('alert')).toHaveTextContent('Network error');
   });
 
   it('calls onDelete with confirmation', () => {
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
-    const onDelete = jest.fn();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const onDelete = vi.fn();
     renderWithRouter(
       <RoomList rooms={mockRooms} loading={false} error={null} onDelete={onDelete} />,
     );
     fireEvent.click(screen.getAllByLabelText(/Delete/i)[0]);
     expect(onDelete).toHaveBeenCalledWith(1);
-    (window.confirm as jest.Mock).mockRestore();
+    (window.confirm as ReturnType<typeof vi.fn>).mockRestore();
   });
 });
