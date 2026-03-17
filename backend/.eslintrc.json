@@ -1,0 +1,20 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.test.json"
+  },
+  "rules": {
+    "max-lines-per-function": ["error", { "max": 40, "skipBlankLines": true, "skipComments": true }],
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/explicit-function-return-type": "warn"
+  },
+  "env": {
+    "node": true,
+    "es2020": true
+  }
+}

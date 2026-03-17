@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  mysql-test:
+    image: mysql:8
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=testpassword
+      - MYSQL_DATABASE=room_dimensions_test
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
