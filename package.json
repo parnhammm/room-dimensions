@@ -1,0 +1,12 @@
+{
+  "name": "room-dimensions",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["backend", "frontend", "tests/e2e"],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "npm run format --workspaces --if-present",
+    "format:check": "npm run format:check --workspaces --if-present"
+  }
+}

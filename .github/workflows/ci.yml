@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main, '001-*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-format:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: testpassword
+          MYSQL_DATABASE: room_dimensions_test
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - working-directory: backend
+        run: npm run test:coverage
+        env:
+          DB_HOST: localhost
+          DB_PORT: 3307
+          DB_USERNAME: root
+          DB_PASSWORD: testpassword
+          DB_DATABASE: room_dimensions_test
+          NODE_ENV: test
+      - name: Check OpenAPI spec drift
+        working-directory: backend
+        run: |
+          npm run build
+          git diff --exit-code src/openapi.json || (echo "OpenAPI spec drift detected — regenerate with npm run build" && exit 1)
+
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - working-directory: frontend
+        run: npm run test:coverage
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    if: >
+      contains(github.event.commits[*].modified, 'frontend/') ||
+      contains(github.event.commits[*].modified, 'specs/') ||
+      github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Install Playwright browsers
+        working-directory: tests/e2e
+        run: npx playwright install --with-deps chromium
+      - name: Start application stack
+        run: docker compose up -d
+      - name: Wait for services
+        run: sleep 30
+      - name: Run E2E tests
+        working-directory: tests/e2e
+        run: npm test
+      - name: Stop application stack
+        if: always()
+        run: docker compose down

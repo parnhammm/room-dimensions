@@ -17,3 +17,5 @@ Please update the README to align with the constitution
 /speckit.tasks
 
 /speckit.analyze
+
+/speckit.implement
