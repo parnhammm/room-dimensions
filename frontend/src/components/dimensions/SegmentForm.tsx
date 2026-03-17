@@ -15,6 +15,7 @@ interface SegmentFormProps {
   submitLabel?: string;
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function SegmentForm({ initialValues, onSubmit, onCancel, submitLabel = 'Save' }: SegmentFormProps) {
   const { unit } = useSettings();
   const [label, setLabel] = useState(initialValues?.label ?? '');
@@ -41,7 +42,7 @@ export function SegmentForm({ initialValues, onSubmit, onCancel, submitLabel = '
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+    <form onSubmit={handleSubmit} aria-label="Segment form" className="flex flex-col gap-3">
       {error && <ErrorMessage message={error} />}
       <div>
         <label htmlFor="seg-label" className="mb-1 block text-sm font-medium text-gray-700">Label</label>

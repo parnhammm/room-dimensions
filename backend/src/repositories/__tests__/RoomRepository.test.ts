@@ -1,4 +1,4 @@
-import { DataSource, Repository, FindOneOptions, FindManyOptions } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { RoomRepository } from '../RoomRepository';
 import { Room } from '../../entities/Room';
 

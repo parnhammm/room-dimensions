@@ -1,1 +1,360 @@
-{}
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Room Dimensions API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "paths": {
+    "/rooms": {
+      "get": {
+        "summary": "List all rooms",
+        "responses": {
+          "200": {
+            "description": "Array of rooms"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new room",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "label",
+                  "floor"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "floor": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created room"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/rooms/summary": {
+      "get": {
+        "summary": "Get print summary grouped by floor",
+        "responses": {
+          "200": {
+            "description": "Print summary data"
+          }
+        }
+      }
+    },
+    "/rooms/{roomId}": {
+      "get": {
+        "summary": "Get room detail",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Room detail with segments and walls"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a room",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated room"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a room",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "summary": "Get current measurement unit",
+        "responses": {
+          "200": {
+            "description": "Current settings"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update measurement unit",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "measurementUnit": {
+                    "type": "string",
+                    "enum": [
+                      "m",
+                      "cm",
+                      "ft",
+                      "in"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated settings"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/rooms/{roomId}/floor-dimensions": {
+      "get": {
+        "summary": "Get floor dimension for a room",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Floor dimension (width × length)"
+          },
+          "404": {
+            "description": "Room or floor dimension not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Create or update floor dimension for a room",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "width",
+                  "length"
+                ],
+                "properties": {
+                  "width": {
+                    "type": "number",
+                    "minimum": 0.0001
+                  },
+                  "length": {
+                    "type": "number",
+                    "minimum": 0.0001
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created or updated floor dimension"
+          },
+          "400": {
+            "description": "Validation error (width/length missing, zero, or negative)"
+          },
+          "404": {
+            "description": "Room not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove floor dimension for a room",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "404": {
+            "description": "Room or floor dimension not found"
+          }
+        }
+      }
+    },
+    "/rooms/{roomId}/ceiling-dimensions": {
+      "get": {
+        "summary": "Get ceiling dimension for a room",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ceiling dimension (width × length)"
+          },
+          "404": {
+            "description": "Room or ceiling dimension not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Create or update ceiling dimension for a room",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "width",
+                  "length"
+                ],
+                "properties": {
+                  "width": {
+                    "type": "number",
+                    "minimum": 0.0001
+                  },
+                  "length": {
+                    "type": "number",
+                    "minimum": 0.0001
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created or updated ceiling dimension"
+          },
+          "400": {
+            "description": "Validation error (width/length missing, zero, or negative)"
+          },
+          "404": {
+            "description": "Room not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove ceiling dimension for a room",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "404": {
+            "description": "Room or ceiling dimension not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": []
+}

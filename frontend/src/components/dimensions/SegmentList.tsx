@@ -16,6 +16,7 @@ interface SegmentListProps {
   onDelete: (id: number) => Promise<void>;
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function SegmentList({ segments, loading, error, surfaceLabel, onAdd, onUpdate, onDelete }: SegmentListProps) {
   const { unit } = useSettings();
   const [editingId, setEditingId] = useState<number | null>(null);

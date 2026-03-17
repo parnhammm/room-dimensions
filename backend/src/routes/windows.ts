@@ -9,7 +9,7 @@ import { CreateWindowDto } from '../dto/window/CreateWindowDto';
 import { UpdateWindowDto } from '../dto/window/UpdateWindowDto';
 
 const router = Router();
-function ctrl() {
+function ctrl(): WindowController {
   return new WindowController(new WindowService(new WindowRepository(AppDataSource), new WallRepository(AppDataSource)));
 }
 

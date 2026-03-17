@@ -1,15 +1,13 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import { DataSource } from 'typeorm';
 import { setupTestDb, teardownTestDb } from '../helpers/dbSetup';
 import createApp from '../../src/app';
 import { Application } from 'express';
 
 let app: Application;
-let dataSource: DataSource;
 
 beforeAll(async () => {
-  dataSource = await setupTestDb();
+  await setupTestDb();
   app = createApp();
 }, 30000);
 

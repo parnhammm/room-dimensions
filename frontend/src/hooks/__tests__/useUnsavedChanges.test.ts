@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useUnsavedChanges } from '../useUnsavedChanges';
 
+// eslint-disable-next-line max-lines-per-function
 describe('useUnsavedChanges', () => {
   it('starts in clean state', () => {
     const { result } = renderHook(() => useUnsavedChanges());

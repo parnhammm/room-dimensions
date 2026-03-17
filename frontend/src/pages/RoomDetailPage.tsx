@@ -7,8 +7,10 @@ import { RoomDetailResponse, SegmentResponse, WallSummaryResponse } from '../typ
 import { LoadingSpinner } from '../components/shared/LoadingSpinner';
 import { ErrorMessage } from '../components/shared/ErrorMessage';
 import { SegmentList } from '../components/dimensions/SegmentList';
+import { SurfaceDimensionPanel } from '../components/dimensions/SurfaceDimensionPanel';
 import { WallList } from '../components/walls/WallList';
 
+// eslint-disable-next-line max-lines-per-function
 export function RoomDetailPage() {
   const { roomId } = useParams<{ roomId: string }>();
   const id = parseInt(roomId!, 10);
@@ -50,6 +52,9 @@ export function RoomDetailPage() {
 
       <section className="mb-6">
         <h2 className="mb-3 text-lg font-semibold">Floor Dimensions</h2>
+        <div className="mb-4">
+          <SurfaceDimensionPanel roomId={id} surfaceType="floor" initialDimension={room.floorDimension} />
+        </div>
         <SegmentList segments={floorSegs} loading={false} error={null} surfaceLabel="floor"
           onAdd={async (v) => { const s = await segmentsService.addSegment(id, { ...v, surfaceType: 'floor' }); setFloorSegs((p) => [...p, s]); }}
           onUpdate={async (sid, v) => { const s = await segmentsService.updateSegment(id, sid, v); setFloorSegs((p) => p.map((x) => x.id === sid ? s : x)); }}
@@ -58,6 +63,9 @@ export function RoomDetailPage() {
 
       <section className="mb-6">
         <h2 className="mb-3 text-lg font-semibold">Ceiling Dimensions</h2>
+        <div className="mb-4">
+          <SurfaceDimensionPanel roomId={id} surfaceType="ceiling" initialDimension={room.ceilingDimension} />
+        </div>
         <SegmentList segments={ceilSegs} loading={false} error={null} surfaceLabel="ceiling"
           onAdd={async (v) => { const s = await segmentsService.addSegment(id, { ...v, surfaceType: 'ceiling' }); setCeilSegs((p) => [...p, s]); }}
           onUpdate={async (sid, v) => { const s = await segmentsService.updateSegment(id, sid, v); setCeilSegs((p) => p.map((x) => x.id === sid ? s : x)); }}

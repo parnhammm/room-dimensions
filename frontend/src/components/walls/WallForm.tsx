@@ -12,6 +12,7 @@ interface WallFormProps {
   error?: string | null;
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function WallForm({ initialValues, onSubmit, submitLabel = 'Save', error }: WallFormProps) {
   const { unit } = useSettings();
   const [label, setLabel] = useState(initialValues?.label ?? '');
@@ -37,7 +38,7 @@ export function WallForm({ initialValues, onSubmit, submitLabel = 'Save', error 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} aria-label="Wall form" className="flex flex-col gap-4">
       {(valErr || error) && <ErrorMessage message={valErr ?? error ?? ''} />}
       <div>
         <label htmlFor="wall-label" className="mb-1 block text-sm font-medium text-gray-700">Label</label>

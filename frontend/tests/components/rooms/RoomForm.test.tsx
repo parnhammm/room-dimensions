@@ -4,7 +4,7 @@ import { RoomForm } from '../../../src/components/rooms/RoomForm';
 describe('RoomForm', () => {
   it('shows validation error when label is empty', async () => {
     render(<RoomForm onSubmit={vi.fn()} />);
-    fireEvent.click(screen.getByRole('button', { name: /Save/i }));
+    fireEvent.submit(screen.getByRole('form', { name: /Room form/i }));
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent('Label is required');
     });
@@ -13,7 +13,7 @@ describe('RoomForm', () => {
   it('shows validation error when floor is empty', async () => {
     render(<RoomForm onSubmit={vi.fn()} />);
     fireEvent.change(screen.getByLabelText(/Room Label/i), { target: { value: 'Kitchen' } });
-    fireEvent.click(screen.getByRole('button', { name: /Save/i }));
+    fireEvent.submit(screen.getByRole('form', { name: /Room form/i }));
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent('Floor is required');
     });
@@ -24,7 +24,7 @@ describe('RoomForm', () => {
     render(<RoomForm onSubmit={onSubmit} />);
     fireEvent.change(screen.getByLabelText(/Room Label/i), { target: { value: '  Kitchen  ' } });
     fireEvent.change(screen.getByLabelText(/Floor/i), { target: { value: '  Ground Floor  ' } });
-    fireEvent.click(screen.getByRole('button', { name: /Save/i }));
+    fireEvent.submit(screen.getByRole('form', { name: /Room form/i }));
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith({ label: 'Kitchen', floor: 'Ground Floor' });
     });

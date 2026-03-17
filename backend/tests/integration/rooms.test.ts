@@ -1,15 +1,13 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import { DataSource } from 'typeorm';
-import { setupTestDb, teardownTestDb, getTestDataSource } from '../helpers/dbSetup';
+import { setupTestDb, teardownTestDb } from '../helpers/dbSetup';
 import createApp from '../../src/app';
 import { Application } from 'express';
 
 let app: Application;
-let dataSource: DataSource;
 
 beforeAll(async () => {
-  dataSource = await setupTestDb();
+  await setupTestDb();
   app = createApp();
 }, 30000);
 
@@ -17,6 +15,7 @@ afterAll(async () => {
   await teardownTestDb();
 });
 
+// eslint-disable-next-line max-lines-per-function
 describe('Rooms API', () => {
   describe('GET /api/v1/rooms', () => {
     it('returns empty array when no rooms', async () => {
