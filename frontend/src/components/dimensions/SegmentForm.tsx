@@ -6,6 +6,8 @@ import { useSettings } from '../../hooks/useSettings';
 export interface SegmentFormValues {
   label: string;
   measurement: number;
+  width?: number;
+  length?: number;
 }
 
 interface SegmentFormProps {
@@ -20,6 +22,8 @@ export function SegmentForm({ initialValues, onSubmit, onCancel, submitLabel = '
   const { unit } = useSettings();
   const [label, setLabel] = useState(initialValues?.label ?? '');
   const [measurement, setMeasurement] = useState(initialValues?.measurement?.toString() ?? '');
+  const [width, setWidth] = useState(initialValues?.width?.toString() ?? '');
+  const [length, setLength] = useState(initialValues?.length?.toString() ?? '');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const { markDirty, markClean } = useUnsavedChanges();
@@ -29,10 +33,16 @@ export function SegmentForm({ initialValues, onSubmit, onCancel, submitLabel = '
     const m = parseFloat(measurement);
     if (!label.trim()) { setError('Label is required'); return; }
     if (!measurement || isNaN(m) || m <= 0) { setError('Measurement must be a positive number'); return; }
+
+    const w = width ? parseFloat(width) : undefined;
+    const l = length ? parseFloat(length) : undefined;
+    if (w !== undefined && (isNaN(w) || w <= 0)) { setError('Width must be a positive number when provided'); return; }
+    if (l !== undefined && (isNaN(l) || l <= 0)) { setError('Length must be a positive number when provided'); return; }
+
     setError(null);
     setSubmitting(true);
     try {
-      await onSubmit({ label: label.trim(), measurement: m });
+      await onSubmit({ label: label.trim(), measurement: m, width: w, length: l });
       markClean();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
@@ -67,6 +77,36 @@ export function SegmentForm({ initialValues, onSubmit, onCancel, submitLabel = '
           onChange={(e) => { setMeasurement(e.target.value); markDirty(); }}
           className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+      </div>
+      <div className="flex gap-3">
+        <div className="flex-1">
+          <label htmlFor="seg-width" className="mb-1 block text-sm font-medium text-gray-700">
+            Width ({unit}) <span className="text-gray-400 font-normal">optional</span>
+          </label>
+          <input
+            id="seg-width"
+            type="number"
+            step="0.0001"
+            min="0.0001"
+            value={width}
+            onChange={(e) => { setWidth(e.target.value); markDirty(); }}
+            className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div className="flex-1">
+          <label htmlFor="seg-length" className="mb-1 block text-sm font-medium text-gray-700">
+            Length ({unit}) <span className="text-gray-400 font-normal">optional</span>
+          </label>
+          <input
+            id="seg-length"
+            type="number"
+            step="0.0001"
+            min="0.0001"
+            value={length}
+            onChange={(e) => { setLength(e.target.value); markDirty(); }}
+            className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
       </div>
       <div className="flex gap-2">
         <button type="submit" disabled={submitting}

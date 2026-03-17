@@ -31,7 +31,11 @@ function RoomEntry({ room, unit }: { room: PrintFloorRoom; unit: string }) {
           <h4 className="font-medium text-gray-700">Floor Dimensions</h4>
           <ul className="ml-4 list-disc">
             {room.floorSegments.map((s) => (
-              <li key={s.id}>{s.label}: {s.measurement} {unit}</li>
+              <li key={s.id}>
+                {s.label}: {s.measurement} {unit}
+                {s.width !== null && <span className="ml-1 text-gray-500">W: {s.width} {unit}</span>}
+                {s.length !== null && <span className="ml-1 text-gray-500">L: {s.length} {unit}</span>}
+              </li>
             ))}
           </ul>
         </div>
@@ -41,7 +45,11 @@ function RoomEntry({ room, unit }: { room: PrintFloorRoom; unit: string }) {
           <h4 className="font-medium text-gray-700">Ceiling Dimensions</h4>
           <ul className="ml-4 list-disc">
             {room.ceilingSegments.map((s) => (
-              <li key={s.id}>{s.label}: {s.measurement} {unit}</li>
+              <li key={s.id}>
+                {s.label}: {s.measurement} {unit}
+                {s.width !== null && <span className="ml-1 text-gray-500">W: {s.width} {unit}</span>}
+                {s.length !== null && <span className="ml-1 text-gray-500">L: {s.length} {unit}</span>}
+              </li>
             ))}
           </ul>
         </div>

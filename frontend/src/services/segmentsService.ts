@@ -6,11 +6,15 @@ export interface CreateSegmentInput {
   label: string;
   measurement: number;
   surfaceType: 'floor' | 'ceiling';
+  width?: number;
+  length?: number;
 }
 
 export interface UpdateSegmentInput {
   label?: string;
   measurement?: number;
+  width?: number;
+  length?: number;
 }
 
 export const segmentsService = {

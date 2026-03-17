@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SegmentResponse } from '../../types';
-import { SegmentForm } from './SegmentForm';
+import { SegmentForm, SegmentFormValues } from './SegmentForm';
 import { LoadingSpinner } from '../shared/LoadingSpinner';
 import { ErrorMessage } from '../shared/ErrorMessage';
 import { EmptyState } from '../shared/EmptyState';
@@ -11,9 +11,22 @@ interface SegmentListProps {
   loading: boolean;
   error: string | null;
   surfaceLabel: string;
-  onAdd: (values: { label: string; measurement: number }) => Promise<void>;
-  onUpdate: (id: number, values: { label?: string; measurement?: number }) => Promise<void>;
+  onAdd: (values: SegmentFormValues) => Promise<void>;
+  onUpdate: (id: number, values: SegmentFormValues) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
+}
+
+function SegmentDimensions({ seg, unit }: { seg: SegmentResponse; unit: string }) {
+  const hasWidth = seg.width !== null && seg.width !== undefined;
+  const hasLength = seg.length !== null && seg.length !== undefined;
+  if (!hasWidth && !hasLength) return null;
+  return (
+    <span className="ml-2 text-gray-400 text-sm">
+      {hasWidth && <span>W: {seg.width} {unit}</span>}
+      {hasWidth && hasLength && <span className="mx-1">·</span>}
+      {hasLength && <span>L: {seg.length} {unit}</span>}
+    </span>
+  );
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -34,7 +47,7 @@ export function SegmentList({ segments, loading, error, surfaceLabel, onAdd, onU
         <div key={seg.id} className="rounded border bg-white p-3">
           {editingId === seg.id ? (
             <SegmentForm
-              initialValues={{ label: seg.label, measurement: seg.measurement }}
+              initialValues={{ label: seg.label, measurement: seg.measurement, width: seg.width ?? undefined, length: seg.length ?? undefined }}
               onSubmit={async (v) => { await onUpdate(seg.id, v); setEditingId(null); }}
               onCancel={() => setEditingId(null)}
               submitLabel="Update"
@@ -44,6 +57,7 @@ export function SegmentList({ segments, loading, error, surfaceLabel, onAdd, onU
               <div>
                 <span className="font-medium">{seg.label}</span>
                 <span className="ml-2 text-gray-500">{seg.measurement} {unit}</span>
+                <SegmentDimensions seg={seg} unit={unit} />
               </div>
               <div className="flex gap-2">
                 <button onClick={() => setEditingId(seg.id)}

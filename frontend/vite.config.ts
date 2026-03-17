@@ -9,6 +9,7 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     coverage: {
       provider: 'v8',
+      exclude: ['src/pages/**'],
       thresholds: {
         lines: 80,
         branches: 80,

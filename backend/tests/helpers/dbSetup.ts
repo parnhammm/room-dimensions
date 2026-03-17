@@ -45,6 +45,8 @@ export async function setupTestDb(): Promise<DataSource> {
   await testDataSource.runMigrations();
   await truncateAll(testDataSource);
 
+  // AppDataSource is used by HTTP routes in createApp(). With setTestEnv.ts injecting
+  // test DB env vars before module load, AppDataSource already points to the test DB.
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
   }

@@ -23,6 +23,8 @@ function mapSegments(segments: DimensionSegment[], type: 'floor' | 'ceiling'): S
       id: s.id,
       label: s.label,
       measurement: Number(s.measurement),
+      width: s.width !== null ? Number(s.width) : null,
+      length: s.length !== null ? Number(s.length) : null,
       surfaceType: s.surfaceType as typeof type,
       createdAt: s.createdAt.toISOString(),
     }));
@@ -83,23 +85,33 @@ function toRoomResponse(room: Room): RoomResponseDto {
   };
 }
 
+function findSurfaceDimension(room: Room, type: 'floor' | 'ceiling'): SurfaceDimensionResponseDto | null {
+  const sd = (room.surfaceDimensions ?? []).find((d) => d.surfaceType === type);
+  return sd ? toSurfaceDimensionResponse(sd) : null;
+}
+
 function toDetailResponse(room: Room): RoomDetailResponseDto {
-  const floorSegs: SegmentResponseDto[] = (room.dimensionSegments ?? [])
+  const segments = room.dimensionSegments ?? [];
+  const floorSegs: SegmentResponseDto[] = segments
     .filter((s) => s.surfaceType === 'floor')
     .map((s) => ({
       id: s.id,
       label: s.label,
       measurement: Number(s.measurement),
+      width: s.width !== null ? Number(s.width) : null,
+      length: s.length !== null ? Number(s.length) : null,
       surfaceType: s.surfaceType,
       createdAt: s.createdAt.toISOString(),
     }));
 
-  const ceilingSegs: SegmentResponseDto[] = (room.dimensionSegments ?? [])
+  const ceilingSegs: SegmentResponseDto[] = segments
     .filter((s) => s.surfaceType === 'ceiling')
     .map((s) => ({
       id: s.id,
       label: s.label,
       measurement: Number(s.measurement),
+      width: s.width !== null ? Number(s.width) : null,
+      length: s.length !== null ? Number(s.length) : null,
       surfaceType: s.surfaceType,
       createdAt: s.createdAt.toISOString(),
     }));
@@ -113,17 +125,14 @@ function toDetailResponse(room: Room): RoomDetailResponseDto {
     updatedAt: w.updatedAt.toISOString(),
   }));
 
-  const floorDimension =
-    (room.surfaceDimensions ?? []).find((sd) => sd.surfaceType === 'floor')
-      ? toSurfaceDimensionResponse((room.surfaceDimensions ?? []).find((sd) => sd.surfaceType === 'floor')!)
-      : null;
-
-  const ceilingDimension =
-    (room.surfaceDimensions ?? []).find((sd) => sd.surfaceType === 'ceiling')
-      ? toSurfaceDimensionResponse((room.surfaceDimensions ?? []).find((sd) => sd.surfaceType === 'ceiling')!)
-      : null;
-
-  return { ...toRoomResponse(room), floorSegments: floorSegs, ceilingSegments: ceilingSegs, walls, floorDimension, ceilingDimension };
+  return {
+    ...toRoomResponse(room),
+    floorSegments: floorSegs,
+    ceilingSegments: ceilingSegs,
+    walls,
+    floorDimension: findSurfaceDimension(room, 'floor'),
+    ceilingDimension: findSurfaceDimension(room, 'ceiling'),
+  };
 }
 
 export class RoomService {

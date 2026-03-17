@@ -24,6 +24,7 @@ npm test && npm run lint
 TypeScript 5.x (strict mode) — frontend and backend: Follow standard conventions
 
 ## Recent Changes
+- 003-overhaul-cleanup: Added TypeScript 5.3.3 (strict mode) — frontend and backend + Express 4.18, TypeORM 0.3, React 18, Tailwind CSS 3,
 - 002-floor-ceiling-dimensions: Added TypeScript 5.3.3 (strict mode) — frontend and backend + Express 4.18, TypeORM 0.3, React 18, Tailwind CSS 3, class-validator 0.14, Vitest 1, Jest 29, Playwrigh
 
 - 001-room-dimension-capture: Added TypeScript 5.x (strict mode) — frontend and backend + React 18, Tailwind CSS, Express 4, TypeORM 0.3, class-validator,
