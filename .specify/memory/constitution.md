@@ -1,25 +1,24 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 2.2.0 → 2.3.0 (MINOR — Testing Methodology section added)
+Version change: 2.4.0 → 2.4.1 (PATCH — no deprecated APIs rule added to Principle III)
 Bump rationale:
-  - New section: Testing Methodology (testing pyramid, unit/E2E/UI tiers, Playwright)
-  - Technology Stack updated: Playwright added for UI E2E testing
-  - Principle IV (Testing Standards) cross-referenced to new methodology section
-  - Testing Gate (gate 4) description in Development Workflow updated to reference pyramid tiers
-  - No principles added, removed, or redefined.
+  - Principle III (Code Quality & Readability): new bullet "No deprecated APIs" added.
+  - Development Workflow gate 3 (Quality Gate): extended to cover deprecated API check.
+  - Code Review checklist Quality Gate item: extended to cover deprecated API check.
+  - No new principles or sections added; no principles removed or redefined.
 
-Modified principles: None
+Modified principles:
+  - III. Code Quality & Readability — added "No deprecated APIs" bullet
 
-Added sections:
-  - ## Testing Methodology
+Added sections: None
 
 Removed sections: None
 
 Templates reviewed:
-  - .specify/templates/plan-template.md      ✅ aligned (Constitution Check gates updated)
-  - .specify/templates/spec-template.md      ✅ aligned (acceptance scenarios map to pyramid tiers)
-  - .specify/templates/tasks-template.md     ✅ aligned (test task types extended with Playwright tasks)
+  - .specify/templates/plan-template.md      ✅ aligned (gate 3 wording updated in constitution)
+  - .specify/templates/spec-template.md      ✅ aligned (no changes required)
+  - .specify/templates/tasks-template.md     ✅ aligned (no changes required)
   - .specify/templates/agent-file-template.md ✅ no references requiring update
 
 Follow-up TODOs:
@@ -89,6 +88,13 @@ All TypeScript code (frontend and backend) MUST meet the following quality stand
   constants or TypeScript enums.
 - **Function length**: Functions and methods MUST NOT exceed 40 lines. Extract helpers if
   needed.
+- **No deprecated APIs**: Deprecated functions, methods, or library features MUST NOT be
+  used in new or modified code. When a dependency deprecates an API that is currently in
+  use, migration to the supported replacement MUST be completed within the same branch
+  that introduces the deprecation warning, or as a dedicated `chore/` branch opened
+  immediately — not deferred indefinitely. TypeScript `@deprecated` JSDoc annotations on
+  internal symbols MUST be treated with equal weight: callers MUST be updated before the
+  PR is merged.
 
 **Rationale**: Consistent, readable code reduces onboarding time and review friction.
 Strict TypeScript catches entire classes of runtime errors at compile time, which is
@@ -232,6 +238,38 @@ NOT be used as a substitute for the tier below.
 common types of defect (unit bugs), while integration and UI tiers catch contract and
 interaction failures that unit tests cannot. Playwright's user-centric model aligns
 directly with Principle II (User Experience First).
+
+## Definition of Done
+
+A feature or specification MUST NOT be considered complete until **all** of the following
+conditions are simultaneously satisfied:
+
+1. **All test suites are green**: Every test suite that covers the changed code — unit tests
+   (Jest / Vitest), API integration tests (Supertest), and UI end-to-end tests (Playwright,
+   if the feature touches the frontend) — MUST pass with zero failures. A single failing
+   test in any tier means the feature is NOT done.
+2. **Tests are up to date**: New or modified behaviour MUST be covered by tests. If existing
+   tests no longer reflect the current implementation they MUST be updated, not deleted.
+   Skipped tests (`xit`, `xdescribe`, `test.skip`) MUST NOT be introduced to make a suite
+   green; they MUST only be used with an accompanying issue reference and a defined
+   resolution date.
+3. **Lint passes with zero errors**: ESLint MUST report zero errors across all workspaces
+   (backend and frontend). Lint warnings are permitted but MUST NOT be silenced with
+   broad `eslint-disable` directives; targeted, line-scoped disables with a justification
+   comment are acceptable when unavoidable (e.g., a known limitation of a rule applied
+   to test files or JSX-heavy components).
+4. **TypeScript compilation succeeds**: The project MUST compile with `tsc --noEmit` (or
+   equivalent) with zero type errors in strict mode.
+
+Any PR that fails to meet these conditions MUST NOT be merged, regardless of reviewer
+approval. The author is responsible for ensuring all four conditions are met before
+requesting review.
+
+**Rationale**: "The tests are almost passing" and "I'll fix the lint later" are the
+most common paths to accumulated technical debt in a growing codebase. Treating a green
+test suite and clean lint as non-negotiable exit criteria keeps the `main` branch always
+in a releasable state and prevents context-switching cost of returning to a half-finished
+feature to fix broken CI.
 
 ## API Design Standards
 
@@ -399,12 +437,13 @@ Reviewers MUST check the following on every PR:
 
 - [ ] SOLID Gate: no mixed concerns, dependencies via interfaces
 - [ ] UX Gate: visual feedback present, Tailwind used, accessibility considered
-- [ ] Quality Gate: strict TS, ESLint clean, Prettier formatted, no magic values
+- [ ] Quality Gate: strict TS, ESLint clean, Prettier formatted, no magic values, no deprecated API usage
 - [ ] Testing Gate: unit tests for new logic, integration tests for new endpoints, ≥ 80% coverage
 - [ ] Domain Model Gate: TypeORM entities/DTOs used correctly, migrations committed
 - [ ] Security Gate: no secrets, input validated, no new attack vectors, `npm audit` clean
 - [ ] API Gate (if applicable): versioned URL, correct HTTP codes, Swagger annotations present
 - [ ] Dependency Gate (if new packages added): maintenance, licence, performance documented
+- [ ] Definition of Done Gate: all test suites green, tests updated, ESLint zero errors, TypeScript compiles
 
 **Rationale**: Small, focused PRs are easier to review correctly. An explicit checklist
 ensures constitution compliance is verified on every change, not just recalled from memory.
@@ -487,7 +526,8 @@ changelog generation, and clarifies intent at code review time.
 2. **UX Gate**: Does this feature deliver clear visual feedback and meet accessibility
    requirements? Is Tailwind CSS used consistently?
 3. **Quality Gate**: Is TypeScript strict mode satisfied? Are ESLint and Prettier configured
-   to cover new files? Are naming and function-length rules followed?
+   to cover new files? Are naming and function-length rules followed? Does new or modified
+   code introduce or retain any deprecated API usage?
 4. **Testing Gate**: Are Tier 1 unit tests written for all new service logic with externals
    mocked? Are Tier 2 integration tests present for all new endpoints against the Docker
    test database? For UI features, is there a Tier 3 Playwright test covering the user
@@ -500,6 +540,10 @@ changelog generation, and clarifies intent at code review time.
 7. **API Gate** *(API changes only)*: Does the endpoint follow `/api/v{n}/` versioning?
    Are HTTP status codes used correctly? Are Swagger annotations present and complete?
    Is the error response shape consistent with the error catalogue?
+8. **Definition of Done Gate**: Do all test suites (unit, integration, and UI E2E where
+   applicable) pass with zero failures? Have tests been updated to cover new or changed
+   behaviour? Does ESLint report zero errors across all workspaces? Does TypeScript
+   compile with zero errors in strict mode?
 
 ## Governance
 
@@ -524,4 +568,4 @@ the constitution first.
 Development Workflow section. Violations require a documented justification entry in the
 plan's Complexity Tracking table before the PR can be merged.
 
-**Version**: 2.3.0 | **Ratified**: 2026-03-17 | **Last Amended**: 2026-03-17
+**Version**: 2.4.1 | **Ratified**: 2026-03-17 | **Last Amended**: 2026-03-17

@@ -12,6 +12,7 @@ interface WindowFormProps {
   submitLabel?: string;
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function WindowForm({ initialValues, onSubmit, onCancel, submitLabel = 'Save' }: WindowFormProps) {
   const { unit } = useSettings();
   const [label, setLabel] = useState(initialValues?.label ?? '');
@@ -34,7 +35,7 @@ export function WindowForm({ initialValues, onSubmit, onCancel, submitLabel = 'S
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+    <form onSubmit={handleSubmit} aria-label="Window form" className="flex flex-col gap-3">
       {error && <ErrorMessage message={error} />}
       <div>
         <label htmlFor="win-label" className="mb-1 block text-sm font-medium text-gray-700">Label</label>

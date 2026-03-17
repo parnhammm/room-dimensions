@@ -1,16 +1,14 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import { DataSource } from 'typeorm';
 import { setupTestDb, teardownTestDb } from '../helpers/dbSetup';
 import createApp from '../../src/app';
 import { Application } from 'express';
 
 let app: Application;
-let dataSource: DataSource;
 let roomId: number;
 
 beforeAll(async () => {
-  dataSource = await setupTestDb();
+  await setupTestDb();
   app = createApp();
   const res = await request(app).post('/api/v1/rooms').send({ label: 'Test Room', floor: 'Ground' });
   roomId = res.body.id;
@@ -20,6 +18,7 @@ afterAll(async () => {
   await teardownTestDb();
 });
 
+// eslint-disable-next-line max-lines-per-function
 describe('Segments API', () => {
   describe('GET /api/v1/rooms/:roomId/segments?surface=floor', () => {
     it('returns empty array for new room', async () => {

@@ -1,5 +1,6 @@
 import { SegmentResponseDto } from '../segment/SegmentResponseDto';
 import { WallSummaryResponseDto } from '../wall/WallSummaryResponseDto';
+import { SurfaceDimensionResponseDto } from '../surface-dimension/SurfaceDimensionResponseDto';
 
 export class RoomDetailResponseDto {
   id!: number;
@@ -10,4 +11,6 @@ export class RoomDetailResponseDto {
   floorSegments!: SegmentResponseDto[];
   ceilingSegments!: SegmentResponseDto[];
   walls!: WallSummaryResponseDto[];
+  floorDimension!: SurfaceDimensionResponseDto | null;
+  ceilingDimension!: SurfaceDimensionResponseDto | null;
 }

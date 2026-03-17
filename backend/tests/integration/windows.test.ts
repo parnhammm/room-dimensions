@@ -1,17 +1,15 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import { DataSource } from 'typeorm';
 import { setupTestDb, teardownTestDb } from '../helpers/dbSetup';
 import createApp from '../../src/app';
 import { Application } from 'express';
 
 let app: Application;
-let dataSource: DataSource;
 let roomId: number;
 let wallId: number;
 
 beforeAll(async () => {
-  dataSource = await setupTestDb();
+  await setupTestDb();
   app = createApp();
   const r = await request(app).post('/api/v1/rooms').send({ label: 'Win Room', floor: 'G' });
   roomId = r.body.id;

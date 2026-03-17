@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Wall } from './Wall';
 import { DimensionSegment } from './DimensionSegment';
+import { SurfaceDimension } from './SurfaceDimension';
 
 @Entity('room')
 export class Room {
@@ -37,4 +38,9 @@ export class Room {
     onDelete: 'CASCADE',
   })
   dimensionSegments!: DimensionSegment[];
+
+  @OneToMany(() => SurfaceDimension, (sd) => sd.room, {
+    cascade: ['remove'],
+  })
+  surfaceDimensions!: SurfaceDimension[];
 }

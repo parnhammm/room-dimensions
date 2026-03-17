@@ -8,11 +8,13 @@ const mockData: PrintSummaryResponse = {
     floor: 'Ground Floor',
     rooms: [{
       id: 1, label: 'Kitchen',
+      floorDimension: null,
+      ceilingDimension: null,
       floorSegments: [{ id: 1, label: 'N Base', measurement: 4.5, surfaceType: 'floor', createdAt: '' }],
       ceilingSegments: [],
       walls: [{
         id: 1, label: 'South Wall', width: 5, height: 2.4, createdAt: '', updatedAt: '',
-        windows: [{ id: 1, label: 'Bay', width: 1.2, height: 1.0, createdAt: '', updatedAt: '' }],
+        windows: [{ id: 1, label: 'Bay', width: 1.2, height: 1.05, createdAt: '', updatedAt: '' }],
       }],
     }],
   }],
@@ -33,7 +35,7 @@ describe('PrintSummary', () => {
   it('renders walls and windows', () => {
     render(<PrintSummary data={mockData} />);
     expect(screen.getByText('South Wall')).toBeInTheDocument();
-    expect(screen.getByText(/Bay.*1\.2.*1\.0.*m/)).toBeInTheDocument();
+    expect(screen.getByText(/Bay.*1\.2.*1\.05.*m/)).toBeInTheDocument();
   });
 
   it('shows empty state when no rooms', () => {

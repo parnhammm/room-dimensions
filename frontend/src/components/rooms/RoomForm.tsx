@@ -14,6 +14,7 @@ interface RoomFormProps {
   error?: string | null;
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function RoomForm({ initialValues, onSubmit, submitLabel = 'Save', error }: RoomFormProps) {
   const [label, setLabel] = useState(initialValues?.label ?? '');
   const [floor, setFloor] = useState(initialValues?.floor ?? '');
@@ -54,7 +55,7 @@ export function RoomForm({ initialValues, onSubmit, submitLabel = 'Save', error 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} aria-label="Room form" className="flex flex-col gap-4">
       {(validationError || error) && (
         <ErrorMessage message={validationError ?? error ?? ''} />
       )}

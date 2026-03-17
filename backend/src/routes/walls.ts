@@ -9,7 +9,7 @@ import { CreateWallDto } from '../dto/wall/CreateWallDto';
 import { UpdateWallDto } from '../dto/wall/UpdateWallDto';
 
 const router = Router();
-function ctrl() {
+function ctrl(): WallController {
   return new WallController(new WallService(new WallRepository(AppDataSource), new RoomRepository(AppDataSource)));
 }
 

@@ -2,6 +2,8 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  // Integration tests share a single MySQL DB — run suites sequentially to prevent race conditions
+  maxWorkers: 1,
   rootDir: '.',
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.test.ts',

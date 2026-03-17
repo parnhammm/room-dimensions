@@ -1,7 +1,6 @@
 import { WindowService } from '../../src/services/WindowService';
 import { IWindowRepository } from '../../src/repositories/IWindowRepository';
 import { IWallRepository } from '../../src/repositories/IWallRepository';
-import { Window as WinEntity } from '../../src/entities/Window';
 import { Wall } from '../../src/entities/Wall';
 import { ErrorCodes } from '../../src/errors/ErrorCodes';
 

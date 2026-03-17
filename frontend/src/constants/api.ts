@@ -12,4 +12,6 @@ export const API_PATHS = {
   WINDOW_BY_ID: (roomId: number, wallId: number, winId: number) =>
     `/api/v1/rooms/${roomId}/walls/${wallId}/windows/${winId}`,
   SETTINGS: '/api/v1/settings',
+  FLOOR_DIMENSIONS: (roomId: number) => `/api/v1/rooms/${roomId}/floor-dimensions`,
+  CEILING_DIMENSIONS: (roomId: number) => `/api/v1/rooms/${roomId}/ceiling-dimensions`,
 } as const;

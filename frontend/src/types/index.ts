@@ -1,5 +1,22 @@
 export type Unit = 'm' | 'cm' | 'ft' | 'in';
 
+export type SurfaceType = 'floor' | 'ceiling';
+
+export interface SurfaceDimensionResponse {
+  id: number;
+  surfaceType: SurfaceType;
+  width: number;
+  length: number;
+  roomId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpsertSurfaceDimensionRequest {
+  width: number;
+  length: number;
+}
+
 export interface RoomResponse {
   id: number;
   label: string;
@@ -42,6 +59,8 @@ export interface RoomDetailResponse extends RoomResponse {
   floorSegments: SegmentResponse[];
   ceilingSegments: SegmentResponse[];
   walls: WallSummaryResponse[];
+  floorDimension: SurfaceDimensionResponse | null;
+  ceilingDimension: SurfaceDimensionResponse | null;
 }
 
 export interface SettingsResponse {
@@ -54,6 +73,8 @@ export interface PrintFloorRoom {
   floorSegments: SegmentResponse[];
   ceilingSegments: SegmentResponse[];
   walls: WallDetailResponse[];
+  floorDimension: SurfaceDimensionResponse | null;
+  ceilingDimension: SurfaceDimensionResponse | null;
 }
 
 export interface PrintFloor {

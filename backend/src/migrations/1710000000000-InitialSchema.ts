@@ -3,6 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class InitialSchema1710000000000 implements MigrationInterface {
   name = 'InitialSchema1710000000000';
 
+  // eslint-disable-next-line max-lines-per-function
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS \`room\` (

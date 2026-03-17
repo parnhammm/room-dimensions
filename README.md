@@ -6,40 +6,152 @@ A web application for managing and visualising room dimensions through an intera
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18+ · TypeScript (strict) · Tailwind CSS |
-| Backend | Node.js (LTS) · TypeScript (strict) · TypeORM |
+| Frontend | React 18+ · TypeScript (strict) · Tailwind CSS · Vite |
+| Backend | Node.js (LTS) · TypeScript (strict) · Express 4 · TypeORM 0.3 |
 | Database | MySQL 8+ |
 | Containerisation | Docker + Docker Compose |
 | Testing | Vitest · React Testing Library · Jest · Supertest · Playwright |
 | Linting / Formatting | ESLint (`@typescript-eslint/recommended`) · Prettier · Husky |
 
-## Getting Started
+---
 
-**Prerequisites**: Docker and Docker Compose.
+## Quickstart
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- [Node.js LTS](https://nodejs.org/) (v20+)
+
+### 1. Clone and install dependencies
 
 ```bash
-# Copy environment config and fill in values
-cp .env.example .env
+git clone <repo-url> room-dimensions
+cd room-dimensions
+npm install
+```
 
-# Start the full application stack
+### 2. Configure environment
+
+```bash
+cp .env.example .env
+# Edit .env if you need non-default DB credentials
+```
+
+### 3. Start the application
+
+**Option A — Docker (production build, recommended for a quick look)**
+
+```bash
 docker compose up
 ```
 
-The application will be available at `http://localhost:3000`.
-API documentation (Swagger) is available at `http://localhost:4000/api/docs`.
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| API | http://localhost:4000/api/v1 |
+| Swagger UI | http://localhost:4000/api/docs |
+| MySQL | localhost:3306 |
+
+**Option B — Local dev servers (hot reload)**
+
+Start the database first, then run backend and frontend in separate terminals:
+
+```bash
+# Terminal 1 — database only
+docker compose up mysql
+
+# Terminal 2 — backend (http://localhost:4000)
+cd backend
+npm run dev
+
+# Terminal 3 — frontend (http://localhost:5173)
+cd frontend
+npm run dev
+```
+
+### 4. Run the database migration
+
+```bash
+cd backend
+npm run migration:run
+```
+
+This sets up the schema. The app is now fully operational.
+
+---
+
+## Running Tests
+
+The project follows the **Testing Pyramid** with three tiers:
+
+### Tier 1 — Unit tests (fast, no external dependencies)
+
+```bash
+# Frontend component tests
+cd frontend && npm test
+
+# Backend unit tests
+cd backend && npm test
+```
+
+### Tier 2 — Integration tests (requires Docker test database)
+
+```bash
+# Start the test database (MySQL on port 3307)
+docker compose -f docker-compose.test.yml up -d
+
+# Run backend integration tests
+cd backend
+DB_HOST=localhost DB_PORT=3307 DB_USERNAME=root DB_PASSWORD=testpassword \
+  DB_DATABASE=room_dimensions_test npm test
+```
+
+> Integration test suites run sequentially (`maxWorkers: 1`) to avoid race conditions on the shared test database.
+
+### Tier 3 — End-to-end tests (requires full stack)
+
+```bash
+# Start the full application stack
+docker compose up -d
+
+# Run Playwright E2E tests (from repo root)
+npx playwright test --config tests/e2e/playwright.config.ts
+```
+
+Coverage is measured at the unit tier only. Business logic must maintain ≥ 80% line/branch coverage.
+
+---
 
 ## Project Structure
 
 ```
-├── frontend/          # React + TypeScript + Tailwind CSS
-├── backend/           # Node.js + TypeScript + TypeORM
+├── frontend/              # React + TypeScript + Tailwind CSS (Vite)
+│   ├── src/
+│   │   ├── components/    # UI components
+│   │   ├── pages/         # Route-level page components
+│   │   ├── services/      # API client functions
+│   │   ├── hooks/         # Custom React hooks
+│   │   └── types/         # Shared TypeScript types
+│   └── tests/             # Vitest + React Testing Library
+├── backend/               # Node.js + TypeScript + Express + TypeORM
+│   ├── src/
+│   │   ├── controllers/   # HTTP request handlers
+│   │   ├── services/      # Business logic
+│   │   ├── repositories/  # Data access layer
+│   │   ├── entities/      # TypeORM entity definitions
+│   │   ├── dto/           # Request/response data transfer objects
+│   │   ├── routes/        # Express route registration
+│   │   └── migrations/    # TypeORM database migrations
+│   └── tests/             # Jest + Supertest (unit + integration)
 ├── tests/
-│   ├── integration/   # Jest + Supertest (API layer, real DB in Docker)
-│   └── e2e/           # Playwright (user journeys, full stack)
-├── docker-compose.yml
-├── docker-compose.test.yml
-└── .env.example
+│   └── e2e/               # Playwright user journey tests
+├── specs/                 # Feature specifications and implementation plans
+├── docker-compose.yml     # Production stack
+├── docker-compose.test.yml # Test database only
+└── .env.example           # Environment variable template
 ```
+
+---
 
 ## Development
 
@@ -69,31 +181,12 @@ Direct commits to `main` are prohibited. All changes arrive via Pull Request.
 The `<type>` must match the branch prefix. Examples:
 
 ```
-feature: add interactive room canvas
+feature: add floor and ceiling dimension panels
 bug: fix dimension rounding on fractional inputs
 chore: configure Husky pre-commit hooks
 ```
 
-## Running Tests
-
-The project follows the **Testing Pyramid** with three tiers:
-
-```bash
-# Tier 1 — Unit tests (all externals mocked, must complete < 60s)
-npm run test:unit
-
-# Tier 2 — Integration tests (requires Docker: real MySQL container)
-docker compose -f docker-compose.test.yml up -d
-npm run test:integration
-
-# Tier 3 — UI end-to-end tests (requires full stack running)
-docker compose up -d
-npm run test:e2e          # Playwright
-```
-
-Coverage is measured at the unit tier only. Business logic must maintain ≥ 80% line/branch coverage.
-
-## Contributing
+### Contributing Checklist
 
 Before opening a PR, ensure:
 
@@ -108,10 +201,12 @@ Reviewers verify all applicable **Constitution Check Gates** on every PR: SOLID 
 Testing · Domain Model · Security · API (if applicable). See the full checklist in
 [`.specify/memory/constitution.md`](.specify/memory/constitution.md).
 
+---
+
 ## Architecture Principles
 
-This project is governed by the [Room Dimensions Constitution](.specify/memory/constitution.md)
-(v2.3.0). The five core principles are:
+This project is governed by the [Room Dimensions Constitution](.specify/memory/constitution.md).
+The five core principles are:
 
 1. **SOLID Design** — all code follows Single Responsibility, Open/Closed, Liskov Substitution,
    Interface Segregation, and Dependency Inversion
@@ -123,6 +218,3 @@ This project is governed by the [Room Dimensions Constitution](.specify/memory/c
    against real DB, Playwright for user journeys
 5. **Consistent Domain Model** — TypeORM entities as single source of truth, DTOs at API
    boundaries, migrations version-controlled
-
-For full governance, amendment procedure, and detailed standards, refer to the
-[constitution](.specify/memory/constitution.md).

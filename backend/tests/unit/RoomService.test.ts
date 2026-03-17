@@ -29,6 +29,7 @@ function makeMockRepo(overrides: Partial<IRoomRepository> = {}): IRoomRepository
   };
 }
 
+// eslint-disable-next-line max-lines-per-function
 describe('RoomService', () => {
   describe('listRooms', () => {
     it('returns mapped room responses', async () => {

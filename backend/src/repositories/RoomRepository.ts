@@ -20,14 +20,14 @@ export class RoomRepository implements IRoomRepository {
   async findByIdWithRelations(id: number): Promise<Room | null> {
     return this.repo.findOne({
       where: { id },
-      relations: { dimensionSegments: true, walls: true },
+      relations: { dimensionSegments: true, walls: true, surfaceDimensions: true },
       order: { dimensionSegments: { createdAt: 'ASC' }, walls: { createdAt: 'ASC' } },
     });
   }
 
   async findAllWithRelations(): Promise<Room[]> {
     return this.repo.find({
-      relations: { dimensionSegments: true, walls: { windows: true } },
+      relations: { dimensionSegments: true, walls: { windows: true }, surfaceDimensions: true },
       order: {
         floor: 'ASC',
         createdAt: 'ASC',

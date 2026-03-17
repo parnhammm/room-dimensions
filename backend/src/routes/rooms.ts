@@ -7,6 +7,7 @@ import { RoomController } from '../controllers/RoomController';
 import { validateDto } from '../middleware/validateDto';
 import { CreateRoomDto } from '../dto/room/CreateRoomDto';
 import { UpdateRoomDto } from '../dto/room/UpdateRoomDto';
+import surfaceDimensionsRouter from './surfaceDimensions';
 
 const router = Router();
 
@@ -125,5 +126,7 @@ router.patch('/:roomId', validateDto(UpdateRoomDto), (req, res, next) =>
  *         description: Not found
  */
 router.delete('/:roomId', (req, res, next) => makeController().deleteRoom(req, res, next));
+
+router.use('/:roomId', surfaceDimensionsRouter);
 
 export default router;

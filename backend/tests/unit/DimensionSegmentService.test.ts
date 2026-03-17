@@ -27,6 +27,7 @@ function mockRoomRepo(overrides: Partial<IRoomRepository> = {}): IRoomRepository
   };
 }
 
+// eslint-disable-next-line max-lines-per-function
 describe('DimensionSegmentService', () => {
   describe('getSegments', () => {
     it('returns floor and ceiling segments independently', async () => {
