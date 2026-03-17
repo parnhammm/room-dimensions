@@ -21,6 +21,12 @@ export class DimensionSegment {
   @Column({ type: 'decimal', precision: 10, scale: 4, nullable: false })
   measurement!: number;
 
+  @Column({ type: 'decimal', precision: 10, scale: 4, nullable: true, default: null })
+  width!: number | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 4, nullable: true, default: null })
+  length!: number | null;
+
   @Column({ type: 'enum', enum: ['floor', 'ceiling'], nullable: false })
   surfaceType!: SurfaceType;
 

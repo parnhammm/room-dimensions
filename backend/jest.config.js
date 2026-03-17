@@ -2,6 +2,8 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  // Inject test DB env vars before any module is evaluated (must be setupFiles, not setupFilesAfterFramework)
+  setupFiles: ['<rootDir>/tests/helpers/setTestEnv.ts'],
   // Integration tests share a single MySQL DB — run suites sequentially to prevent race conditions
   maxWorkers: 1,
   rootDir: '.',

@@ -12,6 +12,8 @@ function toResponse(s: DimensionSegment): SegmentResponseDto {
     id: s.id,
     label: s.label,
     measurement: Number(s.measurement),
+    width: s.width !== null ? Number(s.width) : null,
+    length: s.length !== null ? Number(s.length) : null,
     surfaceType: s.surfaceType,
     createdAt: s.createdAt.toISOString(),
   };

@@ -1,4 +1,4 @@
-import { IsIn, IsNotEmpty, IsPositive, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class CreateSegmentDto {
   @IsNotEmpty()
@@ -10,4 +10,12 @@ export class CreateSegmentDto {
 
   @IsIn(['floor', 'ceiling'])
   surfaceType!: 'floor' | 'ceiling';
+
+  @IsOptional()
+  @IsPositive()
+  width?: number;
+
+  @IsOptional()
+  @IsPositive()
+  length?: number;
 }

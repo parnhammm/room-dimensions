@@ -40,6 +40,7 @@ describe('Segments API', () => {
     });
   });
 
+  // eslint-disable-next-line max-lines-per-function
   describe('POST /api/v1/rooms/:roomId/segments', () => {
     it('creates floor segment', async () => {
       const start = Date.now();
@@ -58,6 +59,31 @@ describe('Segments API', () => {
         .send({ label: 'Ceiling North', measurement: 3.2, surfaceType: 'ceiling' });
       expect(res.status).toBe(201);
       expect(res.body.surfaceType).toBe('ceiling');
+    });
+
+    it('creates segment with width and length', async () => {
+      const res = await request(app)
+        .post(`/api/v1/rooms/${roomId}/segments`)
+        .send({ label: 'Main', measurement: 12.5, surfaceType: 'floor', width: 3.0, length: 2.5 });
+      expect(res.status).toBe(201);
+      expect(Number(res.body.width)).toBe(3.0);
+      expect(Number(res.body.length)).toBe(2.5);
+    });
+
+    it('creates segment without width/length — fields are null', async () => {
+      const res = await request(app)
+        .post(`/api/v1/rooms/${roomId}/segments`)
+        .send({ label: 'Bay', measurement: 2.1, surfaceType: 'floor' });
+      expect(res.status).toBe(201);
+      expect(res.body.width).toBeNull();
+      expect(res.body.length).toBeNull();
+    });
+
+    it('returns 400 for zero width', async () => {
+      const res = await request(app)
+        .post(`/api/v1/rooms/${roomId}/segments`)
+        .send({ label: 'X', measurement: 1.0, surfaceType: 'floor', width: 0 });
+      expect(res.status).toBe(400);
     });
 
     it('returns 400 for zero measurement', async () => {
@@ -105,6 +131,19 @@ describe('Segments API', () => {
       expect(Date.now() - start).toBeLessThan(2000);
       expect(res.status).toBe(200);
       expect(res.body.label).toBe('Updated');
+    });
+
+    it('updating only width leaves length unchanged', async () => {
+      const createRes = await request(app)
+        .post(`/api/v1/rooms/${roomId}/segments`)
+        .send({ label: 'WL', measurement: 5, surfaceType: 'floor', width: 2.0, length: 3.0 });
+      const segId = createRes.body.id;
+      const res = await request(app)
+        .patch(`/api/v1/rooms/${roomId}/segments/${segId}`)
+        .send({ width: 3.2 });
+      expect(res.status).toBe(200);
+      expect(Number(res.body.width)).toBe(3.2);
+      expect(Number(res.body.length)).toBe(3.0);
     });
 
     it('returns 404 for non-existent segment', async () => {

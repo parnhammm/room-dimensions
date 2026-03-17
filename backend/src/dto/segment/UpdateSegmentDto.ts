@@ -9,4 +9,12 @@ export class UpdateSegmentDto {
   @IsOptional()
   @IsPositive()
   measurement?: number;
+
+  @IsOptional()
+  @IsPositive()
+  width?: number;
+
+  @IsOptional()
+  @IsPositive()
+  length?: number;
 }

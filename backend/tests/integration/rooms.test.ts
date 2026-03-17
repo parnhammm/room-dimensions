@@ -27,9 +27,8 @@ describe('Rooms API', () => {
     });
 
     it('returns rooms ordered by floor then createdAt', async () => {
-      await dataSource.query(
-        "INSERT INTO room (label, floor) VALUES ('Living Room', 'First Floor'), ('Kitchen', 'Ground Floor')"
-      );
+      await request(app).post('/api/v1/rooms').send({ label: 'Living Room', floor: 'First Floor' });
+      await request(app).post('/api/v1/rooms').send({ label: 'Kitchen', floor: 'Ground Floor' });
       const res = await request(app).get('/api/v1/rooms');
       expect(res.status).toBe(200);
       expect(res.body[0].floor).toBe('First Floor');
